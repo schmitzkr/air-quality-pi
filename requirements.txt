@@ -1,2 +1,2 @@
-aqi-quality
+python-aqi
 sds011
