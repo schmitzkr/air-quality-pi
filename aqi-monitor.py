@@ -2,8 +2,9 @@ import time
 from datetime import datetime
 from sds011 import *
 import aqi
+import psutil
 
-sensor = SDS011("/dev/ttyUSB1")
+sensor = SDS011("/dev/ttyUSB0")
 
 def get_data(n=3):
         sensor.sleep(sleep=False)
@@ -29,7 +30,7 @@ def conv_aqi(pmt_2_5, pmt_10):
 def save_log(): 
     with open("/home/grigory/air_quality.csv", "a") as log:
         dt = datetime.now()
-    log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5, pmt_10,aqi_10))
+        log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5, pmt_10, aqi_10))
     log.close()
 
 while(True): 
@@ -39,4 +40,4 @@ while(True):
         save_log()
     except:
         print ("[INFO] Failure in logging data") 
-    time.sleep(60)
+    time.sleep(20)
