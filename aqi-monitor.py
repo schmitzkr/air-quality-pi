@@ -3,6 +3,9 @@ from datetime import datetime
 from sds011 import *
 import aqi
 import psutil
+import paho.mqtt.publish as publish
+import config
+
 
 sensor = SDS011("/dev/ttyUSB0")
 
@@ -33,11 +36,30 @@ def save_log():
         log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5, pmt_10, aqi_10))
     log.close()
 
-while(True): 
+""" while(True): 
     pmt_2_5, pmt_10 = get_data()
     aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
     try:
         save_log()
     except:
         print ("[INFO] Failure in logging data") 
-    time.sleep(20)
+    time.sleep(60) """
+
+topic = "channels/" + config.channelID + "/publish/" + config.apiKey
+mqttHost = "mqtt.thingspeak.com"
+
+tTransport = "tcp"
+tPort = 1883
+tTLS = None
+
+while True:        
+    pmt_2_5, pmt_10 = get_data()
+    aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
+    tPayload = "field1=" + str(pmt_2_5)+ "&field2=" + str(aqi_2_5)+ "&field3=" + str(pmt_10)+ "&field4=" + str(aqi_10)
+    try:
+        publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
+        save_log()
+        time.sleep(60)
+    except:
+        print ("[INFO] Failure in sending data")
+        time.sleep(12)
