@@ -60,6 +60,6 @@ while True:
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
         save_log()
         time.sleep(60)
-    """except:
+    except:
         print ("[INFO] Failure in sending data")
-        time.sleep(12)"""
+        time.sleep(12)
