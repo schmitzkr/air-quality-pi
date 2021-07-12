@@ -58,7 +58,7 @@ while True:
     tPayload = "field1=" + str(pmt_2_5)+ "&field2=" + str(aqi_2_5)+ "&field3=" + str(pmt_10)+ "&field4=" + str(aqi_10)
     try:
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
-        save_log()
+        # save_log()
         time.sleep(60)
     except:
         print ("[INFO] Failure in sending data")
