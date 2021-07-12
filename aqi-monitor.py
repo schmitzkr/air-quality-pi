@@ -30,11 +30,11 @@ def conv_aqi(pmt_2_5, pmt_10):
     aqi_10 = aqi.to_iaqi(aqi.POLLUTANT_PM10, str(pmt_10))
     return aqi_2_5, aqi_10
 
-def save_log(): 
+""" def save_log(): 
     with open("/home/grigory/air_quality.csv", "a") as log:
         dt = datetime.now()
         log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5, pmt_10, aqi_10))
-    log.close()
+    log.close() """
 
 """ while(True): 
     pmt_2_5, pmt_10 = get_data()
