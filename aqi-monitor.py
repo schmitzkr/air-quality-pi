@@ -2,7 +2,7 @@
 import time
 from datetime import datetime
 from sds011 import *
-import aqi
+import python-aqi
 import psutil
 import paho.mqtt.publish as publish
 import config
