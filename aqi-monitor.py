@@ -53,8 +53,8 @@ def conv_aqi(pmt_2_5, pmt_10):
         print ("[INFO] Failure in logging data") 
     time.sleep(60) """
 
-def send_notification(aqi):
-    status = 'Cough Cough.... particulate matter seems to be high' + aqi
+def send_notification(aqi_value):
+    status = 'Cough Cough.... particulate matter seems to be high' + aqi_value
     data = urllib.urlencode({'api_key' : config.KEY, 'status': status})
     response = urllib2.urlopen(url=config.BASE_URL, data=data)
     print(response.read())
