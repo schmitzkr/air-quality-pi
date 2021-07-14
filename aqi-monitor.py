@@ -6,9 +6,16 @@ import aqi
 import psutil
 import paho.mqtt.publish as publish
 import config
+import urllib3
+import os
 
 
 sensor = SDS011("/dev/ttyUSB0")
+MAX_GOOD_AQI = 50
+MAX_MODERATE_AQI = 100
+MAX_UNHEALTHY_AQI = 200
+MAX_VERY_UNHEALTHY_AQI = 300
+MAX_HAZARDOUS_AQI = 500
 
 def get_data(n=3):
         sensor.sleep(sleep=False)
@@ -46,6 +53,12 @@ def conv_aqi(pmt_2_5, pmt_10):
         print ("[INFO] Failure in logging data") 
     time.sleep(60) """
 
+def send_notification(aqi):
+    status = 'Cough Cough.... particulate matter seems to be high' + aqi
+    data = urllib.urlencode({'api_key' : config.KEY, 'status': status})
+    response = urllib2.urlopen(url=config.BASE_URL, data=data)
+    print(response.read())
+
 topic = "channels/" + config.channelID + "/publish/" + config.apiKey
 mqttHost = "mqtt.thingspeak.com"
 
@@ -59,6 +72,7 @@ while True:
     tPayload = "field1=" + str(pmt_2_5)+ "&field2=" + str(aqi_2_5)+ "&field3=" + str(pmt_10)+ "&field4=" + str(aqi_10)
     try:
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
+        send_notification()
         # save_log()
         time.sleep(60)
     except:
