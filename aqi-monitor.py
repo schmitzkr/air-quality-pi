@@ -55,8 +55,9 @@ def conv_aqi(pmt_2_5, pmt_10):
 
 def send_notification():
     status = 'Cough Cough.... particulate matter seems to be high'
-    data = urllib.urlencode({'api_key' : config.KEY, 'status': status})
-    response = urllib.urlopen(url=config.BASE_URL, data=data)
+    data = urllib.parse.urlencode({'api_key' : config.KEY, 'status': status})
+    data = data.encode('utf-8') 
+    response = urllib.request.urlopen(url=config.BASE_URL, data=data)
     print(response.read())
 
 topic = "channels/" + config.channelID + "/publish/" + config.apiKey
