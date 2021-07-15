@@ -6,7 +6,7 @@ import aqi
 import psutil
 import paho.mqtt.publish as publish
 import config
-import urllib3
+import urllib
 import os
 
 
@@ -53,10 +53,10 @@ def conv_aqi(pmt_2_5, pmt_10):
         print ("[INFO] Failure in logging data") 
     time.sleep(60) """
 
-def send_notification(aqi_value):
-    status = 'Cough Cough.... particulate matter seems to be high' + aqi_value
+def send_notification():
+    status = 'Cough Cough.... particulate matter seems to be high'
     data = urllib.urlencode({'api_key' : config.KEY, 'status': status})
-    response = urllib2.urlopen(url=config.BASE_URL, data=data)
+    response = urllib.urlopen(url=config.BASE_URL, data=data)
     print(response.read())
 
 topic = "channels/" + config.channelID + "/publish/" + config.apiKey
