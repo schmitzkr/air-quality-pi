@@ -6,7 +6,7 @@ import aqi
 import psutil
 import paho.mqtt.publish as publish
 import config
-import urllib
+import urllib, urllib3
 import os
 
 
@@ -53,8 +53,10 @@ def conv_aqi(pmt_2_5, pmt_10):
         print ("[INFO] Failure in logging data") 
     time.sleep(60) """
 
+
+
 def send_notification():
-    status = 'Cough Cough.... particulate matter seems to be high'
+    status = 'seems to be high' + str(aqi_10)
     data = urllib.parse.urlencode({'api_key' : config.KEY, 'status': status})
     data = data.encode('utf-8') 
     response = urllib.request.urlopen(url=config.BASE_URL, data=data)
@@ -72,7 +74,9 @@ while True:
     aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
     tPayload = "field1=" + str(pmt_2_5)+ "&field2=" + str(aqi_2_5)+ "&field3=" + str(pmt_10)+ "&field4=" + str(aqi_10)
     try:
+        
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
+        #if aqi_10 > 1:
         send_notification()
         # save_log()
         time.sleep(60)
