@@ -5,17 +5,12 @@ from sds011 import *
 import aqi
 import psutil
 import paho.mqtt.publish as publish
-import config
 import urllib, urllib3
 import os
-
+import tweepy
+import json
 
 sensor = SDS011("/dev/ttyUSB0")
-MAX_GOOD_AQI = 50
-MAX_MODERATE_AQI = 100
-MAX_UNHEALTHY_AQI = 200
-MAX_VERY_UNHEALTHY_AQI = 300
-MAX_HAZARDOUS_AQI = 500
 
 def get_data(n=3):
         sensor.sleep(sleep=False)
@@ -38,29 +33,12 @@ def conv_aqi(pmt_2_5, pmt_10):
     aqi_10 = aqi.to_iaqi(aqi.POLLUTANT_PM10, str(pmt_10))
     return aqi_2_5, aqi_10
 
-""" def save_log(): 
-    with open("/home/grigory/air_quality.csv", "a") as log:
-        dt = datetime.now()
-        log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5, pmt_10, aqi_10))
-    log.close() """
-
-""" while(True): 
-    pmt_2_5, pmt_10 = get_data()
-    aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
-    try:
-        save_log()
-    except:
-        print ("[INFO] Failure in logging data") 
-    time.sleep(60) """
-
-
-
-def send_notification():
-    status = 'seems to be high' + str(aqi_10)
-    data = urllib.parse.urlencode({'api_key' : config.KEY, 'status': status})
-    data = data.encode('utf-8') 
-    response = urllib.request.urlopen(url=config.BASE_URL, data=data)
-    print(response.read())
+#twitter stuff
+with open('twitterauth.json') as file:
+    secrets = json.load(file)
+    auth = tweepy.OAuthHandler(secrets['consumerKey'], secrets['consumerSecret'])
+    auth.set_access_token(secrets['token'], secrets['tokenSecret'])
+    twitter = tweepy.API(auth)
 
 topic = "channels/" + config.channelID + "/publish/" + config.apiKey
 mqttHost = "mqtt.thingspeak.com"
@@ -76,10 +54,9 @@ while True:
     try:
         
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
-        #if aqi_10 > 1:
-        send_notification()
-        # save_log()
+        if aqi_10 > 1:
+            twitter.update_status('Tweet the AQI if it is over 10, AQI: '+str(aqi_10)+' PMT2.5: '+str(pmt_2_5))
         time.sleep(60)
-    except:
-        print ("[INFO] Failure in sending data")
-        time.sleep(12)
+    except Exception as e: print(e)
+        #print ("[INFO] Failure in sending data")
+    time.sleep(12)

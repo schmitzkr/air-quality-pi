@@ -1,2 +1,8 @@
 python-aqi
 sds011
+psutil
+paho.mqtt.publish
+urllib
+os
+tweepy
+json
