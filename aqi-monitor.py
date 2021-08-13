@@ -57,7 +57,7 @@ while True:
         
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
         if aqi_10 > 40:
-            twitter.update_status('Tweet the AQI if it is over 10, AQI: '+str(aqi_10)+' PMT2.5: '+str(pmt_2_5))
+            twitter.update_status('Tweet the AQI if it is over 40, AQI: '+str(aqi_10)+' PMT2.5: '+str(pmt_2_5))
         time.sleep(60)
     except Exception as e: print(e)
         #print ("[INFO] Failure in sending data")
