@@ -9,6 +9,7 @@ import urllib, urllib3
 import os
 import tweepy
 import json
+import config
 
 sensor = SDS011("/dev/ttyUSB0")
 
@@ -55,7 +56,7 @@ while True:
     try:
         
         publish.single(topic, payload=tPayload, hostname=config.mqttHost, port=tPort, tls=tTLS, transport=tTransport)
-        if aqi_10 > 10:
+        if aqi_10 > 40:
             twitter.update_status('Tweet the AQI if it is over 10, AQI: '+str(aqi_10)+' PMT2.5: '+str(pmt_2_5))
         time.sleep(60)
     except Exception as e: print(e)
